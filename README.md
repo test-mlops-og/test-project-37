@@ -78,10 +78,6 @@ A stubbed testing module for testing your pipeline as you develop:
 |   `-- test_pipelines.py
 ```
 <br/><br/>
-The `tox` testing framework configuration:
-```
-`-- tox.ini
-```
 
 ## Dataset for the Example Abalone Pipeline
 
