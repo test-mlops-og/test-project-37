@@ -1,0 +1,43 @@
+name: Release Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate release version format in PR title
+        run: |
+          VERSION="${{ github.event.pull_request.title }}"
+          echo "Validating release version: $VERSION"
+
+          # Ensure the version in the PR title strictly follows SemVer (e.g., 1.2.3)
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Invalid SemVer format in PR title: $VERSION"
+            echo "Please update the PR title to a valid semantic version (major.minor.patch)."
+            exit 1
+          fi
+
+          echo "✅ PR title version is valid: $VERSION"
+
+      - name: Ensure release notes are provided in PR description
+        run: |
+          NOTES="${{ github.event.pull_request.body }}"
+          echo "Checking for release notes in the PR description..."
+
+          # Check if release notes exist
+          if [[ -z "$NOTES" ]]; then
+            echo "❌ Release notes are missing. Please include detailed changes, fixes, and improvements."
+            exit 1
+          fi
+
+          # Optionally enforce a minimum character length for meaningful release notes (e.g., 20 characters)
+          if [[ ${#NOTES} -lt 20 ]]; then
+            echo "❌ Release notes are too short. Please provide more details."
+            exit 1
+          fi
+
+          echo "✅ Release notes are present and sufficiently detailed."
